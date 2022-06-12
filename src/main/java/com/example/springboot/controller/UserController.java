@@ -1,7 +1,11 @@
 package com.example.springboot.controller;
 
 
+import com.example.springboot.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,46 +28,61 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("user", userService.getAllUsers());
+    public String index() {
         return "index";
     }
 
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user) {
-        return "new";
+
+    @GetMapping("/admin/")
+    public String adminIndex(Model model) {
+        model.addAttribute("user", userService.getAllUsers());
+        return "/admin/index";
     }
 
-    @PostMapping()
+    @GetMapping("/admin/new")
+    public String newUser(@ModelAttribute("user") User user) {
+        return "admin/new";
+    }
+
+    @PostMapping("/admin/new")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "/new";
+            return "/admin/new";
         }
         userService.addUser(user);
-        return "redirect:/";
+        return "redirect:/admin/";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/admin/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
-        return "edit";
+        return "/admin/edit";
     }
 
-    @PatchMapping("/edit/{id}")
+    @PatchMapping("/admin/edit/{id}")
     public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") Long id) {
         if (bindingResult.hasErrors()) {
-            return "/edit";
+            return "/admin/edit";
         }
         userService.updateUser(user, id);
-        return "redirect:/";
+        return "redirect:/admin/";
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public String delete(@PathVariable("id") Long id) {
         userService.removeUser(id);
-        return "redirect:/";
+        return "redirect:/admin/";
     }
 
+    @GetMapping("/user/")
+    public String userPage(Model model) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        model.addAttribute("user", userDetails.getUser());
+        return "/user/index";
+    }
 
     @GetMapping("css/styletable.css")
     public String styleTable() {
