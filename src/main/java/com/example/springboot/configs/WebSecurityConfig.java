@@ -1,29 +1,26 @@
 package com.example.springboot.configs;
 
-import com.example.springboot.security.AuthProviderImpl;
+import com.example.springboot.service.UserDetailseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
 
-    private final AuthProviderImpl authProvider;
+    private final UserDetailseServiceImpl userDetailseService;
 
     @Autowired
-    public WebSecurityConfig(SuccessUserHandler successUserHandler, AuthProviderImpl authProvider) {
+    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserDetailseServiceImpl userDetailseService) {
         this.successUserHandler = successUserHandler;
-        this.authProvider = authProvider;
+        this.userDetailseService = userDetailseService;
     }
 
 //    @Override
@@ -54,9 +51,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authProvider);
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailseService);
     }
+
+    @Bean
+    public PasswordEncoder getPasswordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
 
     // аутентификация inMemory
 //    @Bean
