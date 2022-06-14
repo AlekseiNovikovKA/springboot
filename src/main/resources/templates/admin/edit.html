@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Пользователь</title>
     <link href="/css/styleform.css" rel="stylesheet">
 </head>
 <body>
-<form th:action="@{/logout}" method="POST">
-    <input type="submit" value="Logout"/>
-</form>
+<p sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></p>
 
 <form class="decor" th:method="PATCH" th:action="@{/admin/edit/{id}(id=${user.getId()})}" th:object="${user}">
     <div class="form-left-decoration"></div>
@@ -27,6 +25,16 @@
         <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         <input type="text" th:field="*{password}" id="password" placeholder="Введите пароль"/>
         <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+        <ul>
+            <li th:each="role : ${rolelist}">
+                <div class="ui checkbox">
+                    <input type="checkbox" th:field="*{roles}"  th:value="${role.getId()}">
+                    <label th:text="${role.getName()}"></label>
+                </div>
+            </li>
+        </ul>
+
         <input type="submit" value="Редактировать"/>
     </div>
 </form>

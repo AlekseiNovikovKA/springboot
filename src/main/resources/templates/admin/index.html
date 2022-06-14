@@ -6,13 +6,8 @@
     <link href="/css/styletable.css" rel="stylesheet">
 </head>
 <body>
-<form th:action="@{/logout}" method="POST">
-    <input type="submit" value="Logout"/>
-</form>
-
-<p><span sec:authentication="${user.email}">Admin</span></p>
+<p><a href="/user/">User info</a></p>
 <p sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></p>
-<br/><br/>
 <div>
     <table class="table">
         <thead>

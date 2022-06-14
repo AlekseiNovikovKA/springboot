@@ -1,11 +1,12 @@
 package com.example.springboot.controller;
 
 
+import com.example.springboot.model.Role;
 import com.example.springboot.security.UserDetailsImpl;
+import com.example.springboot.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,15 +17,16 @@ import com.example.springboot.service.UserService;
 import javax.validation.Valid;
 
 
-
 @Controller
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @GetMapping("/")
@@ -40,7 +42,8 @@ public class UserController {
     }
 
     @GetMapping("/admin/new")
-    public String newUser(@ModelAttribute("user") User user) {
+    public String newUser(@ModelAttribute("user") User user, Model model) {
+        model.addAttribute("rolelist", roleService.getAllRole());
         return "admin/new";
     }
 
@@ -56,6 +59,7 @@ public class UserController {
     @GetMapping("/admin/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
+        model.addAttribute("rolelist", roleService.getAllRole());
         return "/admin/edit";
     }
 
