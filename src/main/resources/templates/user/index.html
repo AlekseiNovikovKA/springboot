@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Пользователь</title>
@@ -9,6 +9,7 @@
 <form th:action="@{/logout}" method="POST">
     <input type="submit" value="Logout"/>
 </form>
+<p sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></p>
 <br/><br/>
 <div>
     <table class="table">
@@ -19,6 +20,7 @@
             <th>Фамилия</th>
             <th>Возраст</th>
             <th>Почта</th>
+            <th>Роль</th>
         </tr>
         </thead>
         <tbody>
@@ -28,6 +30,7 @@
             <td th:utext="${user.lastName}">...</td>
             <td th:utext="${user.age}">...</td>
             <td th:utext="${user.email}">...</td>
+            <td th:utext="${user.roles}">...</td>
         </tr>
         </tbody>
     </table>

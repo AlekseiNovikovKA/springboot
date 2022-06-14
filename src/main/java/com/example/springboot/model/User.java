@@ -3,6 +3,7 @@ package com.example.springboot.model;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -99,5 +100,9 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getStringRole() {
+        return getRoles().stream().map(r -> r.getName().substring(5)).collect(Collectors.joining(" "));
     }
 }
