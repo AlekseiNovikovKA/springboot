@@ -23,7 +23,7 @@
 
         <input type="text" th:field="*{email}" id="email" placeholder="Введите email"/>
         <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-        <input type="password" th:field="*{password}" id="password" placeholder="Введите пароль"/>
+        <input type="password" th:field="*{password}" id="password" placeholder="Введите пароль" required/>
         <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 
         <ul>

@@ -1,8 +1,7 @@
 package com.example.springboot.controller;
 
 
-import com.example.springboot.model.Role;
-import com.example.springboot.security.UserDetailsImpl;
+import com.example.springboot.Util.UserValidator;
 import com.example.springboot.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,11 +21,13 @@ public class UserController {
 
     private final UserService userService;
     private final RoleService roleService;
+    private final UserValidator userValidator;
 
     @Autowired
-    public UserController(UserService userService, RoleService roleService) {
+    public UserController(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
         this.roleService = roleService;
+        this.userValidator = userValidator;
     }
 
     @GetMapping("/")
@@ -48,9 +49,12 @@ public class UserController {
     }
 
     @PostMapping("/admin/new")
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String create(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult, Model model) {
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "/admin/new";
+            model.addAttribute("rolelist", roleService.getAllRole());
+            return "admin/new";
         }
         userService.addUser(user);
         return "redirect:/admin/";
@@ -64,8 +68,11 @@ public class UserController {
     }
 
     @PatchMapping("/admin/edit/{id}")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @PathVariable("id") Long id) {
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                         @PathVariable("id") Long id, Model model) {
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("rolelist", roleService.getAllRole());
             return "/admin/edit";
         }
         userService.updateUser(user, id);
@@ -80,11 +87,10 @@ public class UserController {
 
     @GetMapping("/user/")
     public String userPage(Model model) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
 
-        model.addAttribute("user", userDetails.getUser());
+        model.addAttribute("user", user);
         return "/user/index";
     }
 
