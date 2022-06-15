@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователь</title>
+    <link href="/css/styletable.css" rel="stylesheet">
+</head>
+<body>
+<p sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></p>
+<div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Возраст</th>
+            <th>Почта</th>
+            <th>Роль</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each ="user : ${user}">
+            <td th:utext="${user.id}">...</td>
+            <td th:utext="${user.name}">...</td>
+            <td th:utext="${user.lastName}">...</td>
+            <td th:utext="${user.age}">...</td>
+            <td th:utext="${user.email}">...</td>
+            <td th:utext="${user.getStringRole()}">...</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

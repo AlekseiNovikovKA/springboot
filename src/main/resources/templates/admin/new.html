@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Создать нового пользователя</title>
     <link href="/css/styleform.css" rel="stylesheet">
 </head>
 <body>
+<p sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></p>
 
-
-<form class="decor" th:method="POST" th:action="@{/}" th:object="${user}">
+<form class="decor" th:method="POST" th:action="@{/admin/new}" th:object="${user}">
     <div class="form-left-decoration"></div>
     <div class="form-right-decoration"></div>
     <div class="circle"></div>
@@ -20,6 +20,22 @@
         <div style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
         <input type="text" th:field="*{age}" id="age" placeholder="Введите возраст"/>
         <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></div>
+
+        <input type="text" th:field="*{email}" id="email" placeholder="Введите email"/>
+        <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        <input type="password" th:field="*{password}" id="password" placeholder="Введите пароль" required/>
+        <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+        <ul>
+            <li th:each="role : ${rolelist}">
+                <div class="ui checkbox">
+                    <input type="checkbox" th:field="*{roles}"  th:value="${role.getId()}">
+                    <label th:text="${role.getName()}"></label>
+                </div>
+            </li>
+        </ul>
+
+
         <input type="submit" value="Создать"/>
     </div>
 </form>
